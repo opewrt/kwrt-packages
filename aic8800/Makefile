@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aic8800
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2024-06-20
@@ -23,7 +23,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/aic8800
   SUBMENU:=Wireless Drivers
   TITLE:=SKI WB800D80S wireless support
-  DEPENDS:=+kmod-mac80211 +kmod-mmc \
+  DEPENDS:=+kmod-cfg80211 +kmod-mmc \
 	+@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
   FILES:= \
 	$(PKG_BUILD_DIR)/$(MAKE_PATH)/aic8800_bsp/aic8800_bsp.ko \

@@ -1,0 +1,26 @@
+diff --git a/go.mod b/go.mod
+index 1aecf9c98..fc74ef646 100644
+--- a/go.mod
++++ b/go.mod
+@@ -9,7 +9,7 @@ require (
+ 	github.com/gorilla/handlers v1.5.1
+ 	github.com/gorilla/mux v1.8.0
+ 	github.com/lib/pq v1.10.4
+-	github.com/mattn/go-sqlite3 v1.14.10
++	github.com/mattn/go-sqlite3 v1.14.19
+ 	github.com/rqlite/gorqlite v0.0.0-20210514125552-08ff1e76b22f
+ 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
+ 	github.com/stretchr/testify v1.7.0
+diff --git a/go.sum b/go.sum
+index b613ac120..40c64440a 100644
+--- a/go.sum
++++ b/go.sum
+@@ -102,6 +102,8 @@ github.com/lib/pq v1.10.4/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
+ github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
+ github.com/mattn/go-sqlite3 v1.14.10 h1:MLn+5bFRlWMGoSRmJour3CL1w/qL96mvipqpwQW/Sfk=
+ github.com/mattn/go-sqlite3 v1.14.10/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
++github.com/mattn/go-sqlite3 v1.14.19 h1:fhGleo2h1p8tVChob4I9HpmVFIAkKGpiukdrgQbWfGI=
++github.com/mattn/go-sqlite3 v1.14.19/go.mod h1:2eHXhiwb8IkHr+BDWZGa96P6+rkvnG63S2DGjv9HUNg=
+ github.com/mdlayher/ethtool v0.0.0-20210210192532-2b88debcdd43 h1:WgyLFv10Ov49JAQI/ZLUkCZ7VJS3r74hwFIGXJsgZlY=
+ github.com/mdlayher/ethtool v0.0.0-20210210192532-2b88debcdd43/go.mod h1:+t7E0lkKfbBsebllff1xdTmyJt8lH37niI6kwFk9OTo=
+ github.com/mdlayher/genetlink v1.0.0 h1:OoHN1OdyEIkScEmRgxLEe2M9U8ClMytqA5niynLtfj0=

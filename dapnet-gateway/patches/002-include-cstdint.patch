@@ -1,0 +1,10 @@
+--- a/Conf.cpp
++++ b/Conf.cpp
+@@ -22,6 +22,7 @@
+ #include <cstdio>
+ #include <cstdlib>
+ #include <cstring>
++#include <cstdint>
+ #include <cctype>
+
+ CConf::CConf(const std::string& file) :

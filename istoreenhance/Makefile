@@ -10,11 +10,11 @@ include $(TOPDIR)/rules.mk
 PKG_ARCH_ISTOREENHANCE:=$(ARCH)
 
 PKG_NAME:=istoreenhance
-PKG_VERSION:=0.1.8
-PKG_RELEASE:=5
+PKG_VERSION:=0.5.0
+PKG_RELEASE:=1
 PKG_SOURCE:=iStoreEnhance-binary-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://fw.koolcenter.com/binary/iStoreEnhance/
-PKG_HASH:=skip
+PKG_SOURCE_URL:=https://fw.koolcenter.com/binary/iStoreEnhance/
+PKG_HASH:=e871447d6522f27881a25b59fb44d3f1582af73b06803704e3cab43b456d8894
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/iStoreEnhance-binary-$(PKG_VERSION)
 
@@ -29,6 +29,7 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=iStoreEnhance - Fix some net issues for istore
 	URL:=https://www.istoreos.com/
+	DEPENDS:=@(aarch64||arm||x86_64)
 endef
 
 define Package/$(PKG_NAME)/description

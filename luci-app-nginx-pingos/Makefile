@@ -4,11 +4,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-nginx-pingos
 PKG_VERSION:=1.19.6
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 
 PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://nginx.org/download/
 PKG_HASH:=skip
+
+PCRE_VERSION:=8.45
 
 PKG_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DIR:=$(PKG_DIR)/nginx-$(PKG_VERSION)
@@ -19,13 +21,19 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
+define Download/pcre
+  FILE:=pcre-$(PCRE_VERSION).tar.bz2
+  URL:=https://downloads.sourceforge.net/project/pcre/pcre/$(PCRE_VERSION)/
+  HASH:=4dae6fdcd2bb0bb6c37b5f97c33c2be954da743985369cddac3546e3218bffb8
+endef
+
 define Package/$(PKG_NAME)
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=PingOS server
   PKGARCH:=all
   URL:=https://pingos.io/
-  DEPENDS:=+libpcre +libopenssl +zlib +libpthread
+  DEPENDS:=+libopenssl +zlib +libpthread
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -35,6 +43,7 @@ define Build/Prepare
 	rm -r $(PKG_BUILD_DIR)
 	mkdir -p $(PKG_BUILD_DIR)
 	tar -zxvf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_DIR)
+	tar -jxvf $(DL_DIR)/pcre-$(PCRE_VERSION).tar.bz2 -C $(PKG_DIR)
 	$(CP) -pR ./modules $(PKG_BUILD_DIR)/modules
 	$(call Build/Prepare/Default,)
 endef
@@ -52,6 +61,7 @@ CONFIGURE_ARGS += \
 			--crossbuild=Linux::$(ARCH) \
 			--prefix=/usr \
 			--conf-path=/usr/share/pingos/conf/nginx.conf \
+			--with-pcre=$(PKG_DIR)/pcre-$(PCRE_VERSION) \
 			$(ADDITIONAL_MODULES) \
 			--error-log-path=/var/etc/pingos/error.log \
 			--pid-path=/var/etc/pingos/pingos.pid \
@@ -98,4 +108,5 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/nginx $(1)/usr/sbin/pingos
 endef
 
+$(eval $(call Download,pcre))
 $(eval $(call BuildPackage,$(PKG_NAME)))

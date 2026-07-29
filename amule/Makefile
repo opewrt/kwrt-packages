@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aMule
 PKG_VERSION:=2.3.3
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKG_REV=4b87b20
 
 
@@ -21,7 +21,7 @@ PKG_SOURCE_URL:=https://github.com/amule-project/amule.git
 PKG_MIRROR_HASH:=skip
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-PKG_BUILD_DEPENDS:=libgd libcryptopp
+PKG_BUILD_DEPENDS:=libgd libcryptopp gettext-full/host
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk

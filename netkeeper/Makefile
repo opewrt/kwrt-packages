@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netkeeper
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKG_VERSION:=3
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
@@ -19,7 +19,10 @@ define Package/netkeeper
 	DEPENDS:=+ppp-mod-pppoe
 endef
 
-PPPD_VER := $(shell grep 'PKG_RELEASE_VERSION:=' $(TOPDIR)/package/network/services/ppp/Makefile | awk -F'=' '{print $$2}')
+PPP_MAKEFILE := $(firstword $(wildcard \
+	$(TOPDIR)/package/network/services/ppp/Makefile \
+	$(TOPDIR)/feeds/base/package/network/services/ppp/Makefile))
+PPPD_VER := $(if $(PPP_MAKEFILE),$(shell sed -n 's/^PKG_VERSION:=//p' $(PPP_MAKEFILE) | head -n 1))
 
 TARGET_CFLAGS += -fPIC -DPPPOE_VER='\"$(PPPD_VER)\"'
 TARGET_CFLAGS += -isystem $(PKG_BUILD_DIR)/missing-headers

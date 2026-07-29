@@ -5,7 +5,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=netkeeper-interception
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKG_VERSION:=0.2
 
 include $(INCLUDE_DIR)/package.mk
@@ -23,7 +23,10 @@ define Package/netkeeper-interception/conffiles
 /etc/config/netkeeper-interception
 endef
 
-PPPD_VER := $(shell grep 'PKG_RELEASE_VERSION:=' $(TOPDIR)/package/network/services/ppp/Makefile | awk -F'=' '{print $$2}')
+PPP_MAKEFILE := $(firstword $(wildcard \
+	$(TOPDIR)/package/network/services/ppp/Makefile \
+	$(TOPDIR)/feeds/base/package/network/services/ppp/Makefile))
+PPPD_VER := $(if $(PPP_MAKEFILE),$(shell sed -n 's/^PKG_VERSION:=//p' $(PPP_MAKEFILE) | head -n 1))
 
 PLUGIN_PATH := "plugin /usr/lib/pppd/$(PPPD_VER)/netkeeper-interception-s.so"
 

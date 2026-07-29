@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=naiveproxy
-PKG_VERSION:=132.0.6834.79
-PKG_RELEASE:=11
+PKG_VERSION:=150.0.7871.63
+PKG_RELEASE:=1
 
 ARCH_PREBUILT:=$(ARCH_PACKAGES)
 
@@ -65,7 +65,7 @@ else ifeq ($(ARCH_PREBUILT),riscv64)
 else ifeq ($(ARCH_PREBUILT),x86)
   PKG_HASH:=skip
 else ifeq ($(ARCH_PREBUILT),x86_64)
-  PKG_HASH:=skip
+  PKG_HASH:=f817de82e88aba3cfe0a773816e2717c94dac050fb931055b3d6d5c1e75992bb
 else
   PKG_HASH:=skip
 endif

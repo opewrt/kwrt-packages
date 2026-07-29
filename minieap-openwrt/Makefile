@@ -8,9 +8,9 @@ PKG_LICENSE:=GPLv3
 PKG_LICENSE_FILES:=LICENSE
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/AutoCONFIG/minieap.git
+PKG_SOURCE_URL:=https://github.com/updateing/minieap.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=null
+PKG_SOURCE_VERSION:=983fd4a5851d4a344fab92666c5cdb83f26b2294
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 
 include $(INCLUDE_DIR)/package.mk

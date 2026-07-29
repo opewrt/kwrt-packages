@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libmmdvm
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 # PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
 # MAKE_PATH:=src
@@ -36,7 +36,8 @@ ifeq ($(ARCH),mips)
 endif
 
 MAKE_FLAGS +=\
-		LD=$(TARGET_CXX) \
+		CXX="$(TARGET_CXX)" \
+		LD="$(TARGET_CXX)" \
         CXXFLAGS="$(TARGET_CXXFLAGS)" \
         LDFLAGS="$(TARGET_LDFLAGS)" \
 

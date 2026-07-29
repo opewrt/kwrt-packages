@@ -20,6 +20,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 STRIP:=true
 
@@ -97,6 +98,8 @@ define Package/libcupsimage
   TITLE:=Common UNIX Printing System - Image library
 endef
 
+HOST_CONFIGURE_ARGS += --disable-shared
+
 CONFIGURE_ARGS+= \
 	--with-cups-user="nobody" \
 	--with-cups-group="nogroup" \
@@ -115,6 +118,11 @@ CONFIGURE_ARGS+= \
 	--disable-cdsassl \
 	--disable-ssl \
 	--disable-gssapi
+
+define Host/Install
+	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin
+	$(INSTALL_BIN) $(HOST_BUILD_DIR)/ppdc/ppdc $(STAGING_DIR_HOSTPKG)/bin/
+endef
 
 define Package/cups/install
 	$(INSTALL_DIR) $(1)/etc/cups
@@ -226,6 +234,7 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcups*.so* $(1)/usr/lib/
 endef
 
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,cups))
 $(eval $(call BuildPackage,libcups))
 $(eval $(call BuildPackage,libcupsimage))
