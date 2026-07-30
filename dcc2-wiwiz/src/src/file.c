@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <mntent.h>
 #include <inttypes.h>
+#include <string.h>
 #include <sys/statvfs.h>
 #include <linux/limits.h>
 
@@ -152,9 +153,11 @@ static int start_upload_file(struct file_context *ctx, const char *path)
 {
     struct tty *tty = container_of(ctx, struct tty, file);
     struct rtty *rtty = tty->rtty;
-    const char *name = basename(path);
+    const char *name = strrchr(path, '/');
     struct stat st;
     int fd;
+
+    name = name ? name + 1 : path;
 
     fd = open(path, O_RDONLY);
     if (fd < 0) {

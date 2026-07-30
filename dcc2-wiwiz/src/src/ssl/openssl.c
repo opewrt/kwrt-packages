@@ -336,7 +336,6 @@ static bool handle_wolfssl_asn_error(void *ssl, int r,
     case ASN_SIG_HASH_E:
     case ASN_SIG_KEY_E:
     case ASN_DH_KEY_E:
-    case ASN_NTRU_KEY_E:
     case ASN_CRIT_EXT_E:
     case ASN_ALT_NAME_E:
     case ASN_NO_PEM_HEADER:

@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <string.h>
 
 #include "utils.h"
 #include "file.h"
@@ -88,9 +89,11 @@ static void handle_file_control_msg(int fd, int sfd, const char *path)
         switch (msg.type) {
         case RTTY_FILE_MSG_REQUEST_ACCEPT:
             if (sfd > -1) {
+                const char *name = strrchr(path, '/');
+
                 close(sfd);
                 gettimeofday(&start_time, NULL);
-                printf("Transferring '%s'...Press Ctrl+C to cancel\n", basename(path));
+                printf("Transferring '%s'...Press Ctrl+C to cancel\n", name ? name + 1 : path);
 
                 if (total_size == 0) {
                     printf("  100%%    0 B     0s\n");
