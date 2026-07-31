@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=homebox
 PKG_VERSION:=0.0.0-dev.2020062901
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 PKG_SOURCE_URL_FILE:=v$(PKG_VERSION).tar.gz
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -45,8 +45,9 @@ define Build/Configure
 	)
 	( \
 		cd $(PKG_BUILD_DIR)/server; \
+		$(GO_BIN_PATH) \
 		GOPATH=$(PKG_BUILD_DIR)/.go_work/build \
-		go install -modcacherw github.com/go-bindata/go-bindata/...@latest; \
+		go install -modcacherw github.com/go-bindata/go-bindata/...@v3.1.2+incompatible; \
 	)
 endef
 
