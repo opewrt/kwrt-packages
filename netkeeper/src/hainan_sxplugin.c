@@ -5,14 +5,13 @@
 #include <string.h>
 // TODO : you may obtaion it by git clone https://github.com/squadette/pppd.git
 #include "pppd/pppd.h"
+#include "pppd/chap.h"
+#include "pppd/upap.h"
 #include "md5.h"
 
 typedef unsigned char byte;
 // TODO : change the version here
 char pppd_version[] = PPPOE_VER;
-
-static char saveuser[MAXNAMELEN] = {0};
-static char savepwd[MAXSECRETLEN] = {0};
 
 #define KEY_BUFF_LEN 32
 
@@ -115,9 +114,11 @@ int new_calc_pin(char *username, char *buffer) {
 
 static int pap_modifyusername(char *user, char *passwd) {
   byte PIN[MAXSECRETLEN] = {0};
-  new_calc_pin(saveuser, PIN);
+  (void)passwd;
+  new_calc_pin(user, PIN);
   strcpy(user, PIN);
   info("sxplugin : user  is <%s> ", user);
+  return 1;
 }
 
 static int check() { return 1; }
@@ -125,10 +126,8 @@ static int check() { return 1; }
 void plugin_init(void) {
   info("sxplugin : init");
   info("sxplugin : support for hainan singlenet");
-  strcpy(saveuser, user);
-  strcpy(savepwd, passwd);
-  pap_modifyusername(user, saveuser);
-  info("sxplugin : passwd loaded");
   pap_check_hook = check;
   chap_check_hook = check;
+  pap_passwd_hook = pap_modifyusername;
+  chap_passwd_hook = pap_modifyusername;
 }

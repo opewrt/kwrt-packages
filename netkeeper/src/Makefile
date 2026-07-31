@@ -4,7 +4,7 @@ all:build_dir chongqing_sxplugin chongqing0094_sxplugin hubei_sxplugin zhejiang_
 	@find ./builds/*.so
 
 build_dir:
-	@mkdir ./builds
+	@mkdir -p ./builds
 
 chongqing0094_sxplugin:
 	@$(CC) $(CFLAGS) sxplugin.c -DRADIUS='"xianxinli1radius"'  -DPREFIX1="'\n'" -shared -o ./builds/$@.so

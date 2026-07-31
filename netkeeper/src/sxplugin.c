@@ -4,14 +4,13 @@
 #include <string.h>
 //TODO : you may obtaion it by git clone https://github.com/squadette/pppd.git
 #include "pppd/pppd.h"
+#include "pppd/chap.h"
+#include "pppd/upap.h"
 #include "md5.h"
 #define PREFIX0 '\r'
 typedef unsigned char byte;
 //TODO : change the version here
 char pppd_version[] = PPPOE_VER;
-
-static char saveuser[MAXNAMELEN] = {0};
-static char savepwd[MAXSECRETLEN] = {0};
 
 static void getPIN(byte *userName, byte *PIN)
 {
@@ -106,9 +105,11 @@ static void getPIN(byte *userName, byte *PIN)
 static int pap_modifyusername(char *user, char* passwd)
 {
     byte PIN[MAXSECRETLEN] = {0};
-    getPIN(saveuser, PIN);
+    (void)passwd;
+    getPIN(user, PIN);
     strcpy(user, PIN);
     info("sxplugin : user  is <%s> ",user);
+    return 1;
 }
 
 static int check(){
@@ -118,10 +119,8 @@ static int check(){
 void plugin_init(void)
 {
     info("sxplugin : init");
-    strcpy(saveuser,user);
-    strcpy(savepwd,passwd);
-    pap_modifyusername(user, saveuser);
-    info("sxplugin : passwd loaded");
     pap_check_hook=check;
     chap_check_hook=check;
+    pap_passwd_hook=pap_modifyusername;
+    chap_passwd_hook=pap_modifyusername;
 }
