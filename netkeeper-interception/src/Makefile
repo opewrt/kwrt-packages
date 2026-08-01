@@ -4,7 +4,7 @@ all:build_dir netkeeper-interception-c netkeeper-interception-s
 	@find ./builds/*.so
 
 build_dir:
-	@mkdir ./builds
+	@mkdir -p ./builds
 
 netkeeper-interception-c:
 	@$(CC) $(CFLAGS) netkeeper-interception-c.c -shared -o ./builds/$@.so

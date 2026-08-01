@@ -1,12 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hickory-dns
-PKG_VERSION:=0.0.0
-PKG_RELEASE:=17
+PKG_RELEASE:=18
 
 PKG_SOURCE_PROTO:=git
+PKG_SOURCE_DATE:=2025-01-24
 PKG_SOURCE_URL:=https://github.com/hickory-dns/hickory-dns.git
-PKG_SOURCE_VERSION:=HEAD
+PKG_SOURCE_VERSION:=1c091918a972ef3e202453f146eb644ccd124b57
+PKG_MIRROR_HASH:=cc4f8b3fb62370c83533b5c4be1fa9cc6117f51f5e51535501eaeddaaa192562
 PKG_BUILD_DEPENDS:=rust/host
 PKG_BUILD_PARALLEL:=1
 
@@ -25,7 +26,7 @@ define Package/hickory-dns
 endef
 
 define Build/Compile
-  $(call Build/Compile/Cargo,bin,--no-default-features)
+  $(call Build/Compile/Cargo,bin,--no-default-features --locked)
 endef
 
 define Package/hickory-dns/install

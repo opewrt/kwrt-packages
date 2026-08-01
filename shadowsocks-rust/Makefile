@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=shadowsocks-rust
 PKG_VERSION:=1.22.0
-PKG_RELEASE:=5
+PKG_RELEASE:=6
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/shadowsocks/shadowsocks-rust/tar.gz/v$(PKG_VERSION)?
@@ -40,6 +40,8 @@ define Package/shadowsocks-rust/Default
 	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/bin/$(1) $$(1)/usr/bin/
   endef
 endef
+
+Build/Compile:=$(call Build/Compile/Cargo,,--locked)
 
 SHADOWSOCKS_COMPONENTS:=sslocal ssmanager ssserver ssurl ssservice
 define shadowsocks-rust/templates

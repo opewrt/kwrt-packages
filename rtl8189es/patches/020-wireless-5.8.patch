@@ -84,16 +84,9 @@
  static int cfg80211_rtw_stop_ap(struct wiphy *wiphy, struct net_device *ndev, unsigned int link_id)
  #else
  static int cfg80211_rtw_stop_ap(struct wiphy *wiphy, struct net_device *ndev)
-@@ -6078,6 +6078,9 @@ static int	cfg80211_rtw_set_channel(stru
- #endif /*#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 6, 0))*/
- 
- static int cfg80211_rtw_set_monitor_channel(struct wiphy *wiphy
-+#ifdef BUILD_OPENWRT
-+	, struct net_device *dev
-+#endif
- #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
- 	, struct cfg80211_chan_def *chandef
- #else
+@@ -6081 +6081 @@ static int cfg80211_rtw_set_monitor_channel(struct wiphy *wiphy
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0))
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)) || defined(BUILD_OPENWRT)
 @@ -10270,7 +10273,7 @@ void rtw_wdev_unregister(struct wireless
  	rtw_cfg80211_indicate_scan_done(adapter, _TRUE);
  

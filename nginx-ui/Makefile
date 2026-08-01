@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx-ui
 PKG_VERSION:=2.0.0-beta.42
-PKG_RELEASE:=6
+PKG_RELEASE:=7
 
 PKG_SOURCE:=v$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/0xJacky/nginx-ui/archive/refs/tags/
@@ -42,16 +42,16 @@ define Build/Prepare
 	
 	# 准备前端构建环境
 	cd $(PKG_BUILD_DIR)/app && \
-		npm install && \
-		npm run build
+		npx --yes pnpm@9.15.0 install --frozen-lockfile && \
+		npx --yes pnpm@9.15.0 run build
 endef
 
 define Build/Compile
 	cd $(PKG_BUILD_DIR) && \
 	export GOOS=linux && \
-	export GOARCH=$(GOARCH) && \
+	export GOARCH=$(GO_ARCH) && \
 	export CGO_ENABLED=1 && \
-	go build -tags=jsoniter \
+	$(GO_BIN_PATH) CC="$(TARGET_CC)" go build -buildvcs=false -tags=jsoniter \
 		-ldflags "-w --extldflags '-static' -X 'github.com/0xJacky/Nginx-UI/settings.buildTime=$(shell date +%s)'" \
 		-o $(PKG_BUILD_DIR)/nginx-ui -v main.go
 endef

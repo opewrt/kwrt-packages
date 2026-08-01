@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-nginx-pingos
 PKG_VERSION:=1.19.6
-PKG_RELEASE:=5
+PKG_RELEASE:=6
 
 PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://nginx.org/download/
@@ -56,6 +56,8 @@ ADDITIONAL_MODULES:= --with-http_ssl_module \
 
 TARGET_CFLAGS += -fvisibility=hidden -ffunction-sections -fdata-sections -DNGX_LUA_NO_BY_LUA_BLOCK
 TARGET_LDFLAGS += -Wl,--gc-sections
+
+CONFIGURE_VARS += NGX_PCRE_HOST="$(GNU_TARGET_NAME)"
 
 CONFIGURE_ARGS += \
 			--crossbuild=Linux::$(ARCH) \

@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cups
 PKG_VERSION:=2.3.3
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-source.tar.gz
 PKG_SOURCE_URL:=https://github.com/apple/cups/releases/download/v$(PKG_VERSION)/
@@ -98,7 +98,11 @@ define Package/libcupsimage
   TITLE:=Common UNIX Printing System - Image library
 endef
 
-HOST_CONFIGURE_ARGS += --disable-shared
+HOST_CONFIGURE_ARGS += \
+	--disable-shared \
+	--disable-gssapi \
+	--disable-ssl \
+	--disable-gnutls
 
 CONFIGURE_ARGS+= \
 	--with-cups-user="nobody" \
@@ -122,6 +126,8 @@ CONFIGURE_ARGS+= \
 define Host/Install
 	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/ppdc/ppdc $(STAGING_DIR_HOSTPKG)/bin/
+	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/share/cups/ppdc
+	$(INSTALL_DATA) $(HOST_BUILD_DIR)/data/*.defs $(STAGING_DIR_HOSTPKG)/share/cups/ppdc/
 endef
 
 define Package/cups/install

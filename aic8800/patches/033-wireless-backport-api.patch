@@ -1,0 +1,153 @@
+--- a/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_main.c
++++ b/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_main.c
+@@ -770,8 +770,12 @@
+ 		cfg80211_disconnected(vif->ndev, 0, NULL, 0, 0, GFP_KERNEL);
+ 		#endif
+ 	} else {
++#ifdef BUILD_OPENWRT
++		wiphy_lock(rwnx_hw->wiphy);
++#else
+ 		mutex_lock(&vif->wdev.mtx);
+ 		__acquire(&vif->wdev.mtx);
++#endif
+ 		spin_lock_bh(&rwnx_hw->cb_lock);
+ 		rwnx_chanctx_unlink(vif);
+ 		rwnx_chanctx_link(vif, csa->ch_idx, &csa->chandef);
+@@ -788,8 +792,12 @@
+ #else
+ 		cfg80211_ch_switch_notify(vif->ndev, &csa->chandef);
+ #endif
++#ifdef BUILD_OPENWRT
++		wiphy_unlock(rwnx_hw->wiphy);
++#else
+ 		mutex_unlock(&vif->wdev.mtx);
+ 		__release(&vif->wdev.mtx);
++#endif
+ 	}
+ 	rwnx_del_csa(vif);
+ }
+@@ -4751,9 +4759,16 @@
+  * @change_beacon: Change the beacon parameters for an access point mode
+  *	interface. This should reject the call when AP mode wasn't started.
+  */
++#ifdef BUILD_OPENWRT
++static int rwnx_cfg80211_change_beacon(struct wiphy *wiphy, struct net_device *dev,
++									   struct cfg80211_ap_update *params)
++{
++	struct cfg80211_beacon_data *info = &params->beacon;
++#else
+ static int rwnx_cfg80211_change_beacon(struct wiphy *wiphy, struct net_device *dev,
+ 									   struct cfg80211_beacon_data *info)
+ {
++#endif
+ 	struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
+ 	struct rwnx_vif *vif = netdev_priv(dev);
+ 	struct rwnx_bcn *bcn = &vif->ap.bcn;
+@@ -4833,11 +4848,17 @@
+  * configured at firmware level.
+  */
+ static int rwnx_cfg80211_set_monitor_channel(struct wiphy *wiphy,
++#ifdef BUILD_OPENWRT
++											 struct net_device *dev,
++#endif
+ 											 struct cfg80211_chan_def *chandef)
+ {
+ 	struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
+ 	struct rwnx_vif *rwnx_vif;
+ 	struct me_config_monitor_cfm cfm;
++#ifdef BUILD_OPENWRT
++	(void)dev;
++#endif
+ 	RWNX_DBG(RWNX_FN_ENTRY_STR);
+ 
+ 	if (rwnx_hw->monitor_vif == RWNX_INVALID_VIF)
+@@ -5281,7 +5302,11 @@
+ 
+ 	if (rwnx_vif->vif_index == rwnx_hw->monitor_vif) {
+ 		//retrieve channel from firmware
++#ifdef BUILD_OPENWRT
++		rwnx_cfg80211_set_monitor_channel(wiphy, rwnx_vif->ndev, NULL);
++#else
+ 		rwnx_cfg80211_set_monitor_channel(wiphy, NULL);
++#endif
+ 	}
+ 
+ 	//Check if channel context is valid
+@@ -5418,11 +5443,17 @@
+ 									#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 15, 0))
+ 										, u32 cac_time_ms
+ 									#endif
++#ifdef BUILD_OPENWRT
++										, int link_id
++#endif
+ 										)
+ {
+ 	struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
+ 	struct rwnx_vif *rwnx_vif = netdev_priv(dev);
+ 	struct apm_start_cac_cfm cfm;
++#ifdef BUILD_OPENWRT
++	(void)link_id;
++#endif
+ 
+ 	#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 15, 0))
+ 	rwnx_radar_start_cac(&rwnx_hw->radar, cac_time_ms, rwnx_vif);
+@@ -5590,6 +5621,9 @@
+ #else
+ 	u8 *peer,
+ #endif
++#ifdef BUILD_OPENWRT
++	int link_id,
++#endif
+ 	u8 action_code,
+ 	u8 dialog_token,
+ 	u16 status_code,
+@@ -5609,6 +5643,9 @@
+ 	#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 17, 0)
+ 	bool initiator = false;
+ 	#endif
++#ifdef BUILD_OPENWRT
++	(void)link_id;
++#endif
+ 	struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
+ 	struct rwnx_vif *rwnx_vif = netdev_priv(dev);
+ 	int ret = 0;
+--- a/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_mod_params.c
++++ b/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_mod_params.c
+@@ -1728,7 +1728,9 @@
+     if (!rwnx_hw->mod_params->custregd)
+         return;
+ 
++#ifndef BUILD_OPENWRT
+     wiphy->regulatory_flags |= REGULATORY_IGNORE_STALE_KICKOFF;
++#endif
+     wiphy->regulatory_flags |= REGULATORY_WIPHY_SELF_MANAGED;
+ 
+     rtnl_lock();
+--- a/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_radar.c
++++ b/src/SDIO/driver_fw/driver/aic8800/aic8800_fdrv/rwnx_radar.c
+@@ -1403,7 +1403,11 @@
+ 					#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 14, 0)
+ 					   &ctxt->chan_def,
+ 					#endif
+-					   NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
++					   NL80211_RADAR_CAC_FINISHED, GFP_KERNEL
++#ifdef BUILD_OPENWRT
++					   , 0
++#endif
++					   );
+ 	rwnx_send_apm_stop_cac_req(rwnx_hw, radar->cac_vif);
+ 	rwnx_chanctx_unlink(radar->cac_vif);
+ 
+@@ -1503,7 +1507,11 @@
+ 						#if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 14, 0)
+ 						   &ctxt->chan_def,
+ 						#endif
+-						   NL80211_RADAR_CAC_ABORTED, GFP_KERNEL);
++						   NL80211_RADAR_CAC_ABORTED, GFP_KERNEL
++#ifdef BUILD_OPENWRT
++						   , 0
++#endif
++						   );
+ 		rwnx_chanctx_unlink(radar->cac_vif);
+ 	}
+ 

@@ -1,0 +1,5 @@
+--- a/auto/lib/pcre/make
++++ b/auto/lib/pcre/make
+@@ -56 +56 @@ else
+-	./configure --disable-shared $PCRE_CONF_OPT
++	./configure --host=$NGX_PCRE_HOST --disable-shared $PCRE_CONF_OPT

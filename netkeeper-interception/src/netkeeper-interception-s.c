@@ -4,6 +4,8 @@
 #include <syslog.h>
 #include <netinet/in.h>
 #include "pppd/pppd.h"
+#include "pppd/chap.h"
+#include "pppd/upap.h"
 typedef unsigned char byte;
 typedef unsigned short uint16_t;
 //TODO : change the version here
@@ -12,8 +14,8 @@ char pppd_version[] = PPPOE_VER;
 //static char saveuser[MAXNAMELEN] = {0};
 //static char savepwd[MAXSECRETLEN] = {0};
 
-void print_hex __P(( unsigned char *, uint8_t,  printer_func, void *));
-void print_hex_to_file __P(( unsigned char *, uint8_t,  printer_func, FILE *));
+void print_hex(unsigned char *, uint8_t, printer_func, void *);
+void print_hex_to_file(unsigned char *, uint8_t, printer_func, FILE *);
 
 void print_hex (p, len, printer, arg)
     unsigned char *p;

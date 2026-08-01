@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=brlaser
 PKG_VERSION:=6
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE_URL:=https://github.com/pdewacht/brlaser.git
 PKG_SOURCE_PROTO:=git
@@ -46,7 +46,7 @@ define Package/brlaser/install
 	$(INSTALL_DIR) $(1)/usr/share/cups/drv
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/share/cups/drv/brlaser.drv $(1)/usr/share/cups/drv/
 
-	(cd $(PKG_BUILD_DIR) && ppdc brlaser.drv)
+	(cd $(PKG_BUILD_DIR) && ppdc -I $(STAGING_DIR_HOSTPKG)/share/cups/ppdc brlaser.drv)
 
 	$(INSTALL_DIR) $(1)/usr/share/ppd/Brother
 	$(CP) $(PKG_BUILD_DIR)/ppd/*.ppd $(1)/usr/share/ppd/Brother

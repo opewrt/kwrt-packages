@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tuic-server
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/EAimTY/tuic/tar.gz/tuic-server-$(PKG_VERSION)?
@@ -25,6 +25,13 @@ include $(TOPDIR)/feeds/packages/lang/rust/rust-package.mk
 
 TAR_OPTIONS+= --strip-components 1
 TAR_CMD=$(HOST_TAR) -C $(1)/.. $(TAR_OPTIONS)
+
+Build/Compile:=$(call Build/Compile/Cargo,,--locked)
+
+define Build/Prepare
+	$(call Build/Prepare/Default)
+	$(CP) ./files/Cargo.lock $(PKG_BUILD_DIR)/../Cargo.lock
+endef
 
 define Package/tuic-server
   SECTION:=net
