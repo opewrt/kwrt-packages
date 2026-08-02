@@ -9,16 +9,18 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aMule
 PKG_VERSION:=2.3.3
-PKG_RELEASE:=4
-PKG_REV=4b87b20
-
+PKG_RELEASE:=5
+PKG_REV=4b87b2063b22163ab02bccefd832c4065324f7cd
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-r$(PKG_REV).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_URL:=https://github.com/amule-project/amule.git
-PKG_MIRROR_HASH:=skip
+PKG_MIRROR_HASH:=102c4cb3dd2858db06fff19c5e2d0b65c6731b366f45df2adcd40fd0cd0fec47
+
+AMULE_WEBUI_VERSION:=3fef80d724b71366667d7ae9de5809b878b98f75
+AMULE_WEBUI_FILE:=AmuleWebUI-Reloaded-$(AMULE_WEBUI_VERSION).zip
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_BUILD_DEPENDS:=libgd libcryptopp gettext-full/host
@@ -43,16 +45,15 @@ define Package/amule
 endef
 
 define Download/AmuleWebUI
-  URL:=https://github.com/MatteoRagni/AmuleWebUI-Reloaded/archive
-  URL_FILE:=master.zip
-  FILE:=AmuleWebUI.zip
-  HASH:=skip
+  URL:=https://codeload.github.com/MatteoRagni/AmuleWebUI-Reloaded/zip/$(AMULE_WEBUI_VERSION)?
+  FILE:=$(AMULE_WEBUI_FILE)
+  HASH:=5d135ad0af78109a74a562fc67b6e05bf73c7ff13300e0c9425e8b68b77288ce
 endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
-	unzip $(DL_DIR)/AmuleWebUI.zip -d $(PKG_BUILD_DIR)
-	
+	unzip $(DL_DIR)/$(AMULE_WEBUI_FILE) -d $(PKG_BUILD_DIR)
+
 endef
 
 CONFIGURE_ARGS+= \
@@ -117,7 +118,7 @@ define Package/amule/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/amule{cmd,d} $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/webserver/src/amuleweb $(1)/usr/bin/
 	$(CP) $(PKG_BUILD_DIR)/src/webserver/default $(1)/usr/share/amule/webserver
-	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-master $(1)/usr/share/amule-dlp/webserver/AmuleWebUI-Reloaded
+	$(CP) $(PKG_BUILD_DIR)/AmuleWebUI-Reloaded-$(AMULE_WEBUI_VERSION) $(1)/usr/share/amule-dlp/webserver/AmuleWebUI-Reloaded
 	
 endef
 

@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tvhelper
-PKG_VERSION:=1.0
-PKG_RELEASE:=2
+PKG_VERSION:=2.0.5
+PKG_RELEASE:=3
 
 PKG_SOURCE:=tv.sh
-PKG_SOURCE_URL:=https://raw.githubusercontent.com/wukongdaily/tvhelper/master/shells/
-PKG_HASH:=skip
+PKG_SOURCE_URL:=https://raw.githubusercontent.com/wukongdaily/tvhelper/4b83f0becd957b02c4c92bb83f717366dc0b632b/shells/
+PKG_HASH:=96f2f71e49ba3bc072966d135fff15da43e5f1f9ec736cd98b43ad185679dda6
 
 include $(INCLUDE_DIR)/package.mk
 
