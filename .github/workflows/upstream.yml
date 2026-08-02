@@ -7,22 +7,12 @@
 
 name: Merge-upstream
 on:
-  push:
-    paths:
-      - '.github/workflows/upstream.yml'
-      - '.gitignore'
-      - '.github/diy/**'
-  schedule:
-    - cron: 0 */12 * * *
   workflow_dispatch:
     inputs:
       ssh:
         description: 'ssh'
         required: false
-        default: 'true'
-  watch:
-    types: started
-  repository_dispatch:
+        default: 'false'
 
 jobs:
   merge:
@@ -31,19 +21,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@v4.3.0
       with:
         fetch-depth: 0
 
-    - uses: de-vri-es/setup-git-credentials@v2
-      with:
-        credentials: https://kiddin9:${{ secrets.TOKEN_KIDDIN9 }}@github.com/
-    
-    - name: Set git identity
-      run : |
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        sudo timedatectl set-timezone "Asia/Shanghai"
+    - name: Set timezone
+      run: sudo timedatectl set-timezone "Asia/Shanghai"
 
     - name: Syn upstream
       run: |
@@ -525,7 +508,6 @@ jobs:
         
         sed -i \
           -e 's?include \.\./\.\./\(lang\|devel\)?include $(TOPDIR)/feeds/packages/\1?' \
-          -e "s/\(\(^\| \|	\)\(PKG_HASH\|PKG_MD5SUM\|PKG_MIRROR_HASH\|HASH\):=\).*/\1skip/" \
           -e 's/php7/php8/g' \
           -e 's/+docker\( \|$\)/+docker +dockerd /g' \
           -e 's/URL:=@IMMORTALWRT/URL:=https:\/\/mirror2.immortalwrt.org\/sources/g' \
@@ -540,24 +522,27 @@ jobs:
           sleep 1
         done
 
-    - name: Apply
+    - name: Prepare reviewable sync diff
       run: |
-        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        git add .
-        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-        for pkg in $(git diff-tree --no-commit-id --name-only HEAD); do
-          if [ "$(grep "PKG_RELEASE" $pkg/Makefile)" ]; then
-            sed -i "s/PKG_RELEASE:=.*/PKG_RELEASE:=$(git rev-list --count main $pkg)/" $pkg/Makefile || true
+        set -euo pipefail
+        git add -A
+        git diff --cached --name-only -- '*/Makefile' |
+        while read -r makefile; do
+          [ -f "$makefile" ] || continue
+          pkg="${makefile%/Makefile}"
+          if grep -q '^PKG_RELEASE:=' "$makefile"; then
+            sed -i "s/PKG_RELEASE:=.*/PKG_RELEASE:=$(git rev-list --count main "$pkg")/" "$makefile"
           fi
         done
-        git reset --soft HEAD^
-        git add .
-        git commit -m "${Emoji[$[$RANDOM % ${#Emoji[@]}]]} Sync $(date +%Y-%m-%d" "%H:%M:%S)"
-        git push -f
+        git add -A
+        mkdir -p upstream-sync
+        git diff --cached --binary > upstream-sync/upstream-sync.patch
+        git diff --cached --stat > upstream-sync/upstream-sync.stat
+        git status --short > upstream-sync/upstream-sync.status
 
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      continue-on-error: true
+    - name: Upload sync review artifact
+      uses: actions/upload-artifact@v4.6.2
       with:
-        retain_days: 1
-        keep_minimum_runs: 3
+        name: upstream-sync-${{ github.run_id }}-${{ github.run_attempt }}
+        path: upstream-sync
+        if-no-files-found: error
