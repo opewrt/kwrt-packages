@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <mntent.h>
 #include <inttypes.h>
+#include <libgen.h>
 #include <string.h>
 #include <sys/statvfs.h>
 #include <linux/limits.h>
